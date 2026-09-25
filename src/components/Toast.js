@@ -1,4 +1,5 @@
 import { useToast } from '../context/ToastContext';
+import { Link } from 'react-router-dom';
 
 export function Toast() {
   const { toasts, removeToast } = useToast();
@@ -17,6 +18,7 @@ export function Toast() {
             {toast.type === 'error' && <span className="toast__icon">✕</span>}
             {toast.type === 'success' && <span className="toast__icon">✓</span>}
             <span className="toast__message">{toast.message}</span>
+            {toast.action && <Link className="toast__action" to={toast.action.to} onClick={() => removeToast(toast.id)}>{toast.action.label}</Link>}
           </div>
           <button
             className="toast__close"

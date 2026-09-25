@@ -1,5 +1,8 @@
+import { useRef } from 'react';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
+import { getFirstProductImage, getFirstVariantImage, getProductPrice, hasProductVariants } from '../utils/catalog';
+import { useCartAnimation } from '../context/CartAnimationContext';
 
 export function QuantityControl({ value, onChange, label = 'Quantity' }) {
   const isOneItem = value === 1;
@@ -43,6 +46,8 @@ export function AddToCartButton({
 }) {
   const { addItem } = useCart();
   const { showToast } = useToast();
+  const { animateToCart } = useCartAnimation();
+  const buttonRef = useRef(null);
 
   const handleAddToCart = () => {
     // Validate required size selection for size-dependent products
@@ -69,8 +74,8 @@ export function AddToCartButton({
     }
 
     // Determine the image to use
-    const image = selectedVariant?.images?.[0] || product.images?.[0];
-    const price = selectedVariant?.price || product.price;
+    const image = getFirstVariantImage(product, selectedVariant) || getFirstProductImage(product);
+    const price = getProductPrice(product, selectedVariant);
 
     addItem(
       product,
@@ -82,20 +87,22 @@ export function AddToCartButton({
       quantity
     );
 
-    showToast('Added to cart successfully', 'success');
+    animateToCart(image, buttonRef.current);
+    showToast('Added to cart', 'success', 3500, { label: 'View cart', to: '/cart' });
     if (onSuccess) onSuccess();
   };
 
   // For products without variants, check stock at product level
-  const isOutOfStock = !product.hasVariants && product.stock < 1;
+  const isOutOfStock = !hasProductVariants(product) && product.stock < 1;
   // For products with variants, check stock at variant+size level
   const variantSizeStock = selectedSize && selectedVariant?.sizes?.[selectedSize];
-  const isVariantOutOfStock = product.hasVariants && (!selectedVariant || (selectedSize && variantSizeStock < 1));
+  const isVariantOutOfStock = hasProductVariants(product) && (!selectedVariant || (selectedSize && variantSizeStock < 1));
 
   const disabled = isOutOfStock || (product.hasVariants && isVariantOutOfStock);
 
   return (
     <button
+      ref={buttonRef}
       className="button button--primary add-to-cart"
       type="button"
       disabled={disabled}

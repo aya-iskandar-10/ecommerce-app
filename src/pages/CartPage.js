@@ -4,7 +4,7 @@ import { QuantityControl } from '../components/CartControls';
 import { PageIntro, ProductPrice } from '../components/UI';
 
 export function CartPage() {
-  const { items, subtotal, updateQuantity, removeItem } = useCart();
+  const { items, subtotal, updateQuantity } = useCart();
 
   if (!items.length) {
     return (
@@ -36,10 +36,14 @@ export function CartPage() {
         <div className="cart-items">
           {items.map((item) => (
             <article className="cart-item" key={item.cartItemId}>
-              <img src={item.image} alt={item.productName} />
+              <Link to={`/products/${item.productId}`} state={{ from: '/cart' }}>
+                <img src={item.image} alt={item.productName} />
+              </Link>
               <div className="cart-item__info">
                 <p className="eyebrow">{item.productBrand}</p>
-                <h2>{item.productName}</h2>
+                <Link className="cart-item__product-link" to={`/products/${item.productId}`} state={{ from: '/cart' }}>
+                  <h2>{item.productName}</h2>
+                </Link>
                 <p>{item.category}</p>
                 
                 {/* Display variant information */}
@@ -50,14 +54,6 @@ export function CartPage() {
                   <p className="cart-item__variant">Size: {item.selectedSize}</p>
                 )}
 
-                {/* Remove button always available */}
-                <button
-                  className="remove-button"
-                  type="button"
-                  onClick={() => removeItem(item.cartItemId)}
-                >
-                  Remove
-                </button>
               </div>
               <QuantityControl
                 value={item.quantity}

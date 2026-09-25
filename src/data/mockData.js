@@ -1,18 +1,20 @@
+import { additionalProducts } from './additionalProducts';
+
 export const categories = [
-  { id: 'electronics', name: 'Electronics', icon: 'EL', description: 'Tech for everyday life' },
-  { id: 'fashion', name: 'Fashion', icon: 'FA', description: 'Styles worth wearing' },
-  { id: 'home-living', name: 'Home & Living', icon: 'HL', description: 'Make space feel yours' },
-  { id: 'beauty', name: 'Beauty', icon: 'BP', description: 'Everyday self-care' },
-  { id: 'sports', name: 'Sports & Fitness', icon: 'SF', description: 'Move with intention' },
+  { id: 'electronics', name: 'Electronics', icon: 'EL', description: 'Tech for everyday life', image: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=1000&q=85' },
+  { id: 'fashion', name: 'Fashion', icon: 'FA', description: 'Styles worth wearing', image: 'https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=1000&q=85' },
+  { id: 'home-living', name: 'Home & Living', icon: 'HL', description: 'Make space feel yours', image: 'https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=1000&q=85' },
+  { id: 'beauty', name: 'Beauty', icon: 'BP', description: 'Everyday self-care', image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=1000&q=85' },
+  { id: 'sports', name: 'Sports & Fitness', icon: 'SF', description: 'Move with intention', image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1000&q=85' },
   { id: 'groceries', name: 'Groceries', icon: 'GR', description: 'Good things, delivered' },
   { id: 'toys-games', name: 'Toys & Games', icon: 'TG', description: 'Play starts here' },
   { id: 'automotive', name: 'Automotive', icon: 'AU', description: 'For every journey' },
   { id: 'books', name: 'Books', icon: 'BO', description: 'Stories and ideas' },
-  { id: 'accessories', name: 'Accessories', icon: 'AC', description: 'The finishing touch' },
+  { id: 'accessories', name: 'Accessories', icon: 'AC', description: 'The finishing touch', image: 'https://images.unsplash.com/photo-1523779917675-b6ed3a42a561?auto=format&fit=crop&w=1000&q=85' },
   { id: 'pet-supplies', name: 'Pet Supplies', icon: 'PS', description: 'More joy for companions' },
 ];
 
-export const products = [
+const baseProducts = [
   {
     id: 1,
     name: 'Running Shoes',
@@ -340,7 +342,33 @@ export const products = [
   },
 ];
 
+export const products = [...baseProducts, ...additionalProducts];
+
 export const featuredProducts = products.slice(0, 8);
+
+export const occasions = [
+  {
+    id: 'back-to-school',
+    name: 'Back to School',
+    shortDescription: 'Everything you need for a fresh start, from daily carry essentials to focused-work upgrades.',
+    image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1600&q=85',
+    accent: '#e7c6a8',
+    productIds: [3, 5, 9, 10],
+    ctaTo: '/products?category=electronics',
+    active: true,
+    featured: true,
+  },
+  { id: 'summer', name: 'Summer Edit', shortDescription: 'Light layers, easy movement, and little luxuries for longer days.', image: 'https://images.unsplash.com/photo-1507526427484-bc7e7f5c0c34?auto=format&fit=crop&w=1600&q=85', productIds: [1, 2, 8], active: true, featured: false },
+  { id: 'new-year', name: 'New Year Reset', shortDescription: 'Small upgrades for a clearer, brighter routine.', image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1600&q=85', productIds: [4, 6, 7], active: false, featured: false },
+  { id: 'valentines-day', name: "Valentine's Day", shortDescription: 'Thoughtful gifts and everyday delights worth sharing.', image: 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=1600&q=85', productIds: [5, 8, 10], active: false, featured: false },
+  { id: 'christmas', name: 'Christmas', shortDescription: 'A considered edit for everyone on your list.', image: 'https://images.unsplash.com/photo-1512389142860-9c449e58a543?auto=format&fit=crop&w=1600&q=85', productIds: [3, 6, 8], active: false, featured: false },
+];
+
+export const homepageProductIds = {
+  deals: [1, 2, 6, 8],
+  trending: [3, 4, 6, 9],
+  recommended: [1, 3, 5, 7],
+};
 
 export const popularBrands = ['Auraline', 'North & Hide', 'Morrow', 'Pulse', 'Serein', 'Gather'];
 

@@ -1,4 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
+import { WishlistButton } from './WishlistButton';
+import { getFirstProductImage, getFirstVariant, getFirstVariantImage, getProductOldPrice, getProductPrice, hasProductVariants } from '../utils/catalog';
 
 export function Button({ children, to, variant = 'primary', state, ...props }) {
   const className = `button button--${variant}`;
@@ -23,20 +25,17 @@ export function ProductCard({ product }) {
   const returnPath = `${location.pathname}${location.search}`;
   
   // Handle both variant and non-variant products
-  const displayImage = product.hasVariants 
-    ? product.variants[0]?.images[0] 
-    : product.images[0];
+  const firstVariant = getFirstVariant(product);
+  const displayImage = hasProductVariants(product)
+    ? getFirstVariantImage(product, firstVariant)
+    : getFirstProductImage(product);
   
-  const displayPrice = product.hasVariants 
-    ? product.variants[0]?.price 
-    : product.price;
+  const displayPrice = getProductPrice(product, firstVariant);
     
-  const displayOldPrice = product.hasVariants 
-    ? product.variants[0]?.oldPrice 
-    : product.oldPrice;
+  const displayOldPrice = getProductOldPrice(product, firstVariant);
   
-  const colorClass = product.hasVariants 
-    ? product.variants[0]?.color?.toLowerCase() 
+  const colorClass = hasProductVariants(product)
+    ? firstVariant?.color?.toLowerCase()
     : product.color;
 
   return (
@@ -49,6 +48,7 @@ export function ProductCard({ product }) {
         <img src={displayImage} alt={product.name} />
         {product.badge && <span className="discount-badge">{product.badge}</span>}
       </Link>
+      <WishlistButton product={product} size="small" />
       <div className="product-card__body">
         <p className="eyebrow">{product.brand}</p>
         <h3>{product.name}</h3>
@@ -74,8 +74,30 @@ export function ProductCard({ product }) {
   );
 }
 
+export function ProductSection({ eyebrow, title, subtitle, products, cta, tinted = false }) {
+  return (
+    <section className={`section product-section${tinted ? ' section--tinted' : ''}`}>
+      <div className="section-heading">
+        <div>
+          {eyebrow && <p className="eyebrow">{eyebrow}</p>}
+          <h2>{title}</h2>
+          {subtitle && <p className="section-subtitle">{subtitle}</p>}
+        </div>
+        {cta && <Link to={cta.to}>{cta.label} <span>→</span></Link>}
+      </div>
+      <div className="product-grid">
+        {products.map((product) => <ProductCard key={product.id} product={product} />)}
+      </div>
+    </section>
+  );
+}
+
 export function CategoryCard({ category }) {
-  return <Link className="category-card" to={`/categories/${category.id}`}><span className="category-card__icon">{category.icon}</span><strong>{category.name}</strong><span>{category.description}</span></Link>;
+  return <Link className="category-card" to={`/products?category=${category.id}`}>
+    {category.image && <img src={category.image} alt="" />}
+    <span className="category-card__overlay" />
+    <span className="category-card__content"><span className="category-card__icon">{category.icon}</span><strong>{category.name}</strong><span>{category.description}</span></span>
+  </Link>;
 }
 
 export function PageIntro({ eyebrow, title, description }) {

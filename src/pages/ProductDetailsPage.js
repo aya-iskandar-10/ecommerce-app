@@ -1,22 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { products } from '../data/mockData';
 import { AddToCartButton, QuantityControl } from '../components/CartControls';
 import { Badge, PageIntro, ProductPrice, Rating } from '../components/UI';
 import { ImageCarousel } from '../components/ImageCarousel';
 import { ColorSelector } from '../components/ColorSelector';
 import { SizeSelector } from '../components/SizeSelector';
+import { WishlistButton } from '../components/WishlistButton';
+import { ShareButton } from '../components/ShareButton';
+import { RelatedProducts } from '../components/RelatedProducts';
+import { getProductById, getProductOldPrice, getProductPrice } from '../utils/catalog';
 
 export function ProductDetailsPage() {
   const { productId } = useParams();
   const location = useLocation();
-  const product = products.find((item) => item.id === Number(productId));
+  const product = getProductById(productId);
   
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState(
     product?.hasVariants ? product.variants[0] : null
   );
   const [selectedSize, setSelectedSize] = useState(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    setSelectedVariant(product?.hasVariants ? product.variants[0] : null);
+    setSelectedSize(null);
+    setQuantity(1);
+  }, [productId, product]);
 
   if (!product) {
     return (
@@ -37,8 +47,8 @@ export function ProductDetailsPage() {
   const currentImages = selectedVariant?.images || product.images || [];
   
   // Determine display price based on variant or product
-  const displayPrice = selectedVariant?.price || product.price;
-  const displayOldPrice = selectedVariant?.oldPrice || product.oldPrice;
+  const displayPrice = getProductPrice(product, selectedVariant);
+  const displayOldPrice = getProductOldPrice(product, selectedVariant);
   
   // Determine stock info
   let stockInfo = null;
@@ -76,7 +86,8 @@ export function ProductDetailsPage() {
           <p className="eyebrow">
             {product.brand} / {product.category}
           </p>
-          <h1>{product.name}</h1>
+          <div className="product-detail__share"><ShareButton product={product} /></div>
+          <div className="product-detail__title-row"><h1>{product.name}</h1></div>
           
           <div className="detail-rating">
             <Rating value={product.rating} />
@@ -130,6 +141,7 @@ export function ProductDetailsPage() {
               quantity={quantity}
               onSuccess={handleAddToCart}
             />
+            <WishlistButton product={product} size="large" />
           </div>
 
           <div className="detail-note">
@@ -155,6 +167,7 @@ export function ProductDetailsPage() {
           ))}
         </div>
       </div>
+      <RelatedProducts product={product} />
     </section>
   );
 }

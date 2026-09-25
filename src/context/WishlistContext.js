@@ -12,12 +12,10 @@ export function WishlistProvider({ children }) {
   };
 
   const addToWishlist = (product) => {
-    if (isInWishlist(product.id)) {
-      showToast('Already in wishlist', 'success');
-      return;
-    }
-    
-    setWishlistItems((current) => [...current, product]);
+    setWishlistItems((current) => {
+      if (current.some((item) => item.id === product.id)) return current;
+      return [...current, product];
+    });
     showToast('Added to wishlist', 'success');
   };
 
